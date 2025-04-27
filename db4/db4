@@ -1,0 +1,26 @@
+> mongosh
+> use eventManagement
+> db.events.insertMany([
+  { eventId: 1, eventName: "Tech Conference", eventDate: "2025-06-15", eventLocation: "New York" },
+  { eventId: 2, eventName: "AI Workshop", eventDate: "2025-07-10", eventLocation: "San Francisco" }])
+> db.attendees.insertMany([
+  { attendeeId: 101, name: "John Doe", email: "john@example.com"},
+  { attendeeId: 102, name: "Jane Smith", email: "jane@example.com" }])
+> db.registrations.insertMany([
+  { attendeeId: 101, eventId: 1 },
+  { attendeeId: 102, eventId: 2 }])
+> db.events.find()
+> db.registrations.aggregate([
+  { $match: { eventId: 1 } },
+  { $lookup: {
+      from: "attendees",
+      localField: "attendeeId",
+      foreignField: "attendeeId",
+      as: "attendeeInfo"}}])
+> db.registrations.aggregate([
+  { $match: { attendeeId: 101 } },
+  { $lookup: {
+      from: "events",
+      localField: "eventId",
+      foreignField: "eventId",
+      as: "eventInfo"}}])

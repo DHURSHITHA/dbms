@@ -1,0 +1,6 @@
+pip install flask fakeredis
+python app.py
+http://127.0.0.1:5000-welcome
+http://127.0.0.1:5000/post/1-within 10 sec cache and database will alter
+http://127.0.0.1:5000/clear-cache/1
+

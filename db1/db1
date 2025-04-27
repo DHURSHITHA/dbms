@@ -1,0 +1,23 @@
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100) UNIQUE,
+    Department VARCHAR(50),
+    Salary DECIMAL(10,2)
+);
+INSERT INTO Employees (FirstName, LastName, Email, Department, Salary)
+VALUES 
+('Maria', 'David', 'maria.david@example.com', 'IT', 60000.00),
+('Josh', 'Stephen', 'john.stephen@example.com', 'HR', 55000.00),
+('Arun', 'kumar', 'arun.kumar@example.com', 'Finance', 58000.00);
+READ
+SELECT * FROM Employees;
+SELECT * FROM Employees WHERE Department = 'IT';
+UPDATE
+UPDATE Employees
+SET Salary = 65000.00
+WHERE Email = 'john.doe@example.com';
+DELETE
+DELETE FROM Employees
+WHERE Email = 'jane.smith@example.com';

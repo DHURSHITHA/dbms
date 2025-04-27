@@ -1,0 +1,47 @@
+CREATE DATABASE EcommerceDB;
+CREATE DATABASE ProductDB;
+USE EcommerceDB;
+CREATE TABLE Customers (
+    CustomerId INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE NOT NULL);
+CREATE TABLE Orders (
+    OrderId INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerId INT,
+    TotalAmount DECIMAL(10, 2),
+    FOREIGN KEY (CustomerId) REFERENCES 
+Customers(CustomerId));
+CREATE TABLE OrderItems (
+    OrderId INT,
+    ProductId INT,
+    Quantity INT,
+    FOREIGN KEY (OrderId) REFERENCES 
+Orders(OrderId));
+INSERT INTO Customers (name, email)
+VALUES ('Priya', 'priya@gmail.com');
+INSERT INTO Orders (CustomerId, TotalAmount)
+VALUES (1, 80000.00);
+INSERT INTO OrderItems (OrderId, ProductId, Quantity)
+VALUES (1, 1, 1), (1, 2, 1);
+USE ProductDB;
+CREATE TABLE Products (
+    ProductId INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    price DECIMAL(10,2));
+INSERT INTO Products (name, price)
+VALUES ('Laptop', 55000.00), ('Phone', 25000.00);
+SELECT * FROM Products;
+USE EcommerceDB;
+SELECT * FROM Customers;
+SELECT * FROM Orders;
+SELECT * FROM OrderItems;
+SELECT
+    c.name AS CustomerName,
+    o.OrderId,
+    oi.Quantity,
+    p.name AS ProductName,
+    p.price
+FROM Orders o
+JOIN Customers c ON o.CustomerId = c.CustomerId
+JOIN OrderItems oi ON o.OrderId = oi.OrderId
+JOIN ProductDB.Products p ON oi.ProductId = p.ProductId;

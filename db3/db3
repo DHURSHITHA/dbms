@@ -1,0 +1,45 @@
+-- Create the Library Database
+CREATE DATABASE LibraryManagement;
+
+USE LibraryManagement;
+
+-- Table for Books
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY,
+    Title VARCHAR(100),
+    Author VARCHAR(100),
+    Publisher VARCHAR(100),
+    Price DECIMAL(10,2),
+    PublishedDate DATE,
+    Available BOOLEAN
+);
+
+-- Table for Members
+CREATE TABLE Members (
+    MemberID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Address VARCHAR(255),
+    MemberType ENUM('Student', 'Faculty'),
+    MemberDate DATE
+);
+
+-- Table for Issues (Books issued to members)
+CREATE TABLE Issues (
+    IssueID INT PRIMARY KEY,
+    BookID INT,
+    MemberID INT,
+    IssueDate DATE,
+    DueDate DATE,
+    FOREIGN KEY (BookID) REFERENCES Books(BookID),
+    FOREIGN KEY (MemberID) REFERENCES Members(MemberID)
+);
+
+-- Table for Returns (Details of book returns)
+CREATE TABLE Returns (
+    ReturnID INT PRIMARY KEY,
+    IssueID INT,
+    ReturnDate DATE,
+    ExpiryDate DATE,
+    FOREIGN KEY (IssueID) REFERENCES Issues(IssueID)
+);
+

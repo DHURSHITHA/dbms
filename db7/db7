@@ -1,0 +1,50 @@
+CREATE DATABASE SecureBankDB;
+USE SecureBankDB;
+CREATE TABLE Customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL);
+CREATE TABLE Accounts (
+    account_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    balance DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id));
+CREATE TABLE Transactions (
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_account_id INT,
+    receiver_account_id INT,
+    amount DECIMAL(15,2) NOT NULL,
+    transaction_type ENUM('Debit', 'Credit') NOT NULL,
+    FOREIGN KEY (sender_account_id) REFERENCES Accounts(account_id),
+    FOREIGN KEY (receiver_account_id) REFERENCES Accounts(account_id));
+DELIMITER //
+CREATE PROCEDURE TransferFunds(
+    IN sender_account INT,
+    IN receiver_account INT,
+    IN amount DECIMAL(15,2))
+BEGIN
+    DECLARE sender_balance DECIMAL(15,2);
+    SELECT balance INTO sender_balance FROM Accounts WHERE account_id = sender_account;
+    IF sender_balance >= amount THEN
+    UPDATE Accounts SET balance = balance - amount WHERE account_id = sender_account;
+    UPDATE Accounts SET balance = balance + amount WHERE account_id = receiver_account;  	 
+    INSERT INTO Transactions (sender_account_id, receiver_account_id, amount, transaction_type)
+    VALUES (sender_account, receiver_account, amount, 'Debit'); 
+    INSERT INTO Transactions (sender_account_id, receiver_account_id, amount, transaction_type)
+    VALUES (receiver_account, sender_account, amount, 'Credit');
+    ELSE
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient Funds';
+    END IF;
+END//
+DELIMITER ;
+INSERT INTO Customers (name, email) VALUES
+('Alice Johnson', 'alice@example.com'),
+('Bob Smith', 'bob@example.com');
+INSERT INTO Accounts (customer_id, balance) VALUES
+(1, 5000.00),
+(2, 3000.00);
+CALL TransferFunds(1, 2, 1000.00);
+SELECT * FROM Customers;
+SELECT * FROM Accounts;
+SELECT * FROM Transactions;
+
